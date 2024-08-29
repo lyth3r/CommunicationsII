@@ -1,7 +1,7 @@
 import numpy as np
 from gnuradio import gr
 class blk ( gr . sync_block ) :
-	def __init__ ( self ) : # only default arguments here
+	def __init__ ( self) : # only default arguments here
 		gr . sync_block . __init__ (
 			self ,
 			name = " e_Acum " , # will show up in GRC
@@ -14,5 +14,5 @@ class blk ( gr . sync_block ) :
 		N = len(x)
 		y = output_items [0] # Senial acumulada
 		y[:] = self.acum_anterior+np.cumsum(x)
-		self.acum_anterior=y[N-1]
+		self.acum_anterior=y[-1]
 		return len(x)
