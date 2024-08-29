@@ -7,13 +7,14 @@ class blk(gr.sync_block):
             name ="Diferenciador", # will show up in GRC
             in_sig =[np.float32],
             out_sig =[np.float32])
-        self.acum_anterior=0
+        self.last_sample=0
         
     def work (self , input_items , output_items ):
         x = input_items[0] # Senial de entrada .
-        y0 = output_items[0] # Senial acumulada diferencial
+        y = output_items[0] # Senial acumulada diferencial
         N = len(x)
-        diff = np.cumsum(x) - self.acum_anterior
-        self.acum_anterior = diff[N-1]
-        y0[:] = diff
-        return len(y0)
+        y[0] = x[0] - self.last_sample
+        y[1:] = np.diff(x)
+        self.last_sample = x[-1]
+        
+        return len(x)
