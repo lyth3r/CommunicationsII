@@ -6,18 +6,30 @@
 #
 # GNU Radio Python Flow Graph
 # Title: Not titled yet
-# GNU Radio version: v3.11.0.0git-810-g1ecb8565
+# GNU Radio version: 3.10.1.1
+
+from packaging.version import Version as StrictVersion
+
+if __name__ == '__main__':
+    import ctypes
+    import sys
+    if sys.platform.startswith('linux'):
+        try:
+            x11 = ctypes.cdll.LoadLibrary('libX11.so')
+            x11.XInitThreads()
+        except:
+            print("Warning: failed to XInitThreads()")
 
 from PyQt5 import Qt
 from gnuradio import qtgui
+from gnuradio.filter import firdes
+import sip
 from gnuradio import analog
 from gnuradio import blocks
 from gnuradio import gr
-from gnuradio.filter import firdes
 from gnuradio.fft import window
 import sys
 import signal
-from PyQt5 import Qt
 from argparse import ArgumentParser
 from gnuradio.eng_arg import eng_float, intx
 from gnuradio import eng_notation
@@ -25,10 +37,10 @@ import Aplicacion_epy_block_0 as epy_block_0  # embedded python block
 import Aplicacion_epy_block_0_0_0 as epy_block_0_0_0  # embedded python block
 import Aplicacion_epy_block_0_1 as epy_block_0_1  # embedded python block
 import Aplicacion_epy_block_0_2 as epy_block_0_2  # embedded python block
-import sip
-import threading
 
 
+
+from gnuradio import qtgui
 
 class Aplicacion(gr.top_block, Qt.QWidget):
 
@@ -39,8 +51,8 @@ class Aplicacion(gr.top_block, Qt.QWidget):
         qtgui.util.check_set_qss()
         try:
             self.setWindowIcon(Qt.QIcon.fromTheme('gnuradio-grc'))
-        except BaseException as exc:
-            print(f"Qt GUI: Could not set Icon: {str(exc)}", file=sys.stderr)
+        except:
+            pass
         self.top_scroll_layout = Qt.QVBoxLayout()
         self.setLayout(self.top_scroll_layout)
         self.top_scroll = Qt.QScrollArea()
@@ -53,15 +65,15 @@ class Aplicacion(gr.top_block, Qt.QWidget):
         self.top_grid_layout = Qt.QGridLayout()
         self.top_layout.addLayout(self.top_grid_layout)
 
-        self.settings = Qt.QSettings("gnuradio/flowgraphs", "Aplicacion")
+        self.settings = Qt.QSettings("GNU Radio", "Aplicacion")
 
         try:
-            geometry = self.settings.value("geometry")
-            if geometry:
-                self.restoreGeometry(geometry)
-        except BaseException as exc:
-            print(f"Qt GUI: Could not restore geometry: {str(exc)}", file=sys.stderr)
-        self.flowgraph_started = threading.Event()
+            if StrictVersion(Qt.qVersion()) < StrictVersion("5.0.0"):
+                self.restoreGeometry(self.settings.value("geometry").toByteArray())
+            else:
+                self.restoreGeometry(self.settings.value("geometry"))
+        except:
+            pass
 
         ##################################################
         # Variables
@@ -71,7 +83,6 @@ class Aplicacion(gr.top_block, Qt.QWidget):
         ##################################################
         # Blocks
         ##################################################
-
         self.qtgui_time_sink_x_0_0 = qtgui.time_sink_f(
             500, #size
             samp_rate, #samp_rate
@@ -368,7 +379,7 @@ class Aplicacion(gr.top_block, Qt.QWidget):
 
 
     def closeEvent(self, event):
-        self.settings = Qt.QSettings("gnuradio/flowgraphs", "Aplicacion")
+        self.settings = Qt.QSettings("GNU Radio", "Aplicacion")
         self.settings.setValue("geometry", self.saveGeometry())
         self.stop()
         self.wait()
@@ -390,12 +401,14 @@ class Aplicacion(gr.top_block, Qt.QWidget):
 
 def main(top_block_cls=Aplicacion, options=None):
 
+    if StrictVersion("4.5.0") <= StrictVersion(Qt.qVersion()) < StrictVersion("5.0.0"):
+        style = gr.prefs().get_string('qtgui', 'style', 'raster')
+        Qt.QApplication.setGraphicsSystem(style)
     qapp = Qt.QApplication(sys.argv)
 
     tb = top_block_cls()
 
     tb.start()
-    tb.flowgraph_started.set()
 
     tb.show()
 
