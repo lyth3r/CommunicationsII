@@ -23,6 +23,7 @@ options:
     sizing_mode: fixed
     thread_safe_setters: ''
     title: Not titled yet
+    window_size: (1000,1000)
   states:
     bus_sink: false
     bus_source: false
@@ -72,7 +73,7 @@ blocks:
   id: variable
   parameters:
     comment: ''
-    value: np.array([1,1,1,1])
+    value: np.array([1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1])
   states:
     bus_sink: false
     bus_source: false
@@ -84,7 +85,7 @@ blocks:
   id: variable
   parameters:
     comment: ''
-    value: Rb*Sps
+    value: Sps*Rb
   states:
     bus_sink: false
     bus_source: false
@@ -320,7 +321,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [851, 175]
+    coordinate: [864, 176.0]
     rotation: 0
     state: true
 - name: epy_block_0
@@ -634,6 +635,7 @@ blocks:
     label7: ''
     label8: ''
     label9: ''
+    legend: 'True'
     maxoutbuf: '0'
     minoutbuf: '0'
     name: '"PSD (Watts/Hz)"'
@@ -711,7 +713,7 @@ blocks:
   parameters:
     alias: ''
     comment: ''
-    stream_id: p4
+    stream_id: p5
   states:
     bus_sink: false
     bus_source: false
@@ -724,7 +726,7 @@ blocks:
   parameters:
     alias: ''
     comment: ''
-    stream_id: p5
+    stream_id: p4
   states:
     bus_sink: false
     bus_source: false
@@ -755,3 +757,4 @@ connections:
 
 metadata:
   file_format: 1
+  grc_version: v3.11.0.0git-810-g1ecb8565
